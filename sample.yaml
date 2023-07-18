@@ -1,0 +1,52 @@
+# Api Deployment
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sample-ns
+  labels:
+    app: sample-app
+spec: {}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: sample-app
+  name: sample-app
+  namespace: sample-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-app
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: sample-app
+    spec:
+      containers:
+      - name: sample-app
+        image: quay.io/rh_ee_mrudraia/python_app:v1
+        
+status: {}
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: watch-keeper-limit-poll
+  namespace: sample-ns
+data:
+  # Type of list (must be 'true')
+  exclude: 'true'
+
+  # Resources affected (must be 'true')
+  v1_node: 'true'
+  v1_namespace: 'true'
+  apps_v1_deployment: 'true'
+  v1_configmap: 'true'
